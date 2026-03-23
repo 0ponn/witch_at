@@ -98,14 +98,14 @@ export default function PrivacyPage() {
         <div>
           <h2 className="text-xl font-medium mb-3">Contact</h2>
           <p className="text-[#c4bdb4] leading-relaxed">
-            For privacy concerns or questions, contact us at{" "}
-            <a
-              href="mailto:privacy@0pon.com"
+            For privacy concerns or questions, use the{" "}
+            <Link
+              href="/"
               className="text-[var(--witch-parchment-muted)] underline hover:text-[var(--witch-parchment)]"
             >
-              privacy@0pon.com
-            </a>
-            .
+              Feedback button
+            </Link>{" "}
+            on the main page.
           </p>
         </div>
       </section>
