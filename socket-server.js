@@ -71,6 +71,7 @@ const socketToRoom = new Map(); // socketId -> roomId
 const activeDMs = new Map(); // `${roomId}:${color1}:${color2}` (sorted colors) -> { participants, lastActivity }
 const dmCleanupTimers = new Map(); // dmKey -> timer (single timer per DM session)
 const MAX_ROOMS = 50; // Limit total rooms to prevent DoS (Issue #4)
+const MAX_CONNECTIONS = 500; // Safety cap for total concurrent connections
 
 function getRoomId(roomIdOrSlug) {
   // Normalize room ID: lowercase, alphanumeric + hyphens only
@@ -470,6 +471,14 @@ startMoodDecayTimer(io);
 startSilenceTimer(io);
 
 io.on("connection", (socket) => {
+  // Safety cap: reject new connections if at capacity
+  if (io.engine.clientsCount > MAX_CONNECTIONS) {
+    logger.warn("Connection rejected: server at capacity", { clientsCount: io.engine.clientsCount });
+    socket.emit("error", "Server at capacity");
+    socket.disconnect(true);
+    return;
+  }
+
   const clientIP = getClientIP(socket);
 
   // Check if banned
